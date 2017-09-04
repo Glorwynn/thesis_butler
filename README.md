@@ -10,14 +10,15 @@ C'est un outil développé par un doctorant, pour des doctorants. Si vous souhai
 
 ## STRUCTURE
     /
-    |--thesis_butler
-       |--default_contents.txt
-    |--bibliography
-       |--biblio1.bib  
-    |--header
+    |--office/
+       |--env.tex
+       |--new_part_content.tbr
+       |--new_chapter_content.tbr
+    |--bibliography/
+    |--header/
        |--packages.tex
        |--macros.tex
-    |--front_page
+    |--front_page/
        |--i3s.png
        |--uca.png
        |--front_page.tex
@@ -28,7 +29,6 @@ C'est un outil développé par un doctorant, pour des doctorants. Si vous souhai
 - `thesis_butler` contient l'ensemble des fichiers dont **Thesis Butler** a besoin pour fonctionner.
 - `front_page` contient la page de garde et les logos
 - `header` contient l'ensemble des packages et des macros du documents. Si vous souhaitez ajouter d'autres packages, c'est ici.
-- `biblio` contient l'ensemble des fichier de biblio du document.
 - le fichier `content.tex` contient l'ensemble des importations des parties et chapitres de la thèse.
 
 ## COMMANDES
