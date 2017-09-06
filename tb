@@ -1,0 +1,105 @@
+#!/bin/bash
+###################
+## Thesis Butler ##
+###################
+
+bold=$(tput bold)
+normal=$(tput sgr0)
+
+function help {
+    echo -e "Thesis Butler - commandes"
+    echo
+    echo -e "${bold}new-part${normal} <nom_partie>"
+    echo -e "\tCréer une nouvelle partie dans la racine de la thèse"
+    echo
+    echo -e "${bold}new-chapter${normal} [nom_partie] <nom_chapitre>"
+    echo -e "\tCréer un nouveau chapitre dans la racine de la thèse ou dans la partie"
+    echo -e "\tnom_partie."
+    echo
+    echo -e "${bold}new-bib${normal} <nom_biblio>"
+    echo -e "\tCréer un nouveau fichier de bibliographie et son importantion dans la"
+    echo -e "\tthèse."
+    echo
+    echo -e "${bold}go-write${normal} <nom>"
+    echo -e "\tGénère de fichier de rédaction de la partie ou du chapitre indiqué, en"
+    echo -e "\tfonction du contenu du plan détaillé"
+    echo
+    echo -e "${bold}content${normal} [nom]"
+    echo -e "\tAffiche le plan de la thèse, partie ou chapitre"
+    echo
+    echo -e "${bold}these${normal} <action>"
+    echo -e "\tExécute l'action en argument à la thèse."
+    echo
+    echo -e "${bold}part${normal} <nom_partie> <action>"
+    echo -e "\tExécute l'action en argument à la partie."
+    echo
+    echo -e "${bold}chapter${normal} [nom_partie] <nom_chapitre> <action>"
+    echo -e "\tExécute l'action en argument au chapitre."
+    echo
+    echo -e "${bold}clean${normal} [nom_partie] [nom_chapitre]"
+    echo -e "\tExécute l'action en argument à la thèse."
+
+}
+
+case $1 in
+    'new-chapter' )
+        data=`echo $2 | sed s/' '/'-'/g`
+        file=plan-$data
+        mkdir $data
+        echo "[OK] Création du répertoire $data"
+        echo "\\section{Contenu du chapitre}" > $data/$file.tex
+        echo "[OK] Création du fichier $file.tex"
+        chapterContain="\\\\documentclass[a4paper,11pt]{report}\n\\\\input{../header/packages}\n\\\\input{../header/macros}\n\\\\input{../header/tikz}\n\n\\\\begin{document}\n\t\\\\chapter{$data}\n\t\\\\input{$file}\n\t\\\\bibliographystyle{plain}\n\t\\\\bibliography{"
+        for bibFile in biblio/*; do
+            bibFile=`expr match "$bibFile" '.*/\(.*\)\.bib'`
+            chapterContain=$chapterContain"../biblio/$bibFile,"
+        done
+        chapterContain=`expr match "$chapterContain" '^\(.*\),$'`"}\n\\\\end{document}"
+        echo $chapterContain > $data/chapter.tex
+        echo "[OK] Création du fichier chapter.tex"
+        cp makefile $data/makefile
+        sed -i 's/filename=these/filename=chapter/g' $data/makefile
+        echo "[OK] Création du makefile"
+        chapterAdded="\\\\chapter{$data}\\\\label{chap:$data}\n\t\t\\\\includefrom{$data\/}{$file}\n\t%<<new-chapter>>%"
+        sed -i "s/%<<new-chapter>>%/$chapterAdded/g" these.tex
+        echo "[OK] Ajout du lien dans these.tex"
+    ;;
+    'new-bib' )
+        if [ `grep -c "\\\\\\bibliography{}" these.tex` -eq 1 ]; then
+            echo "new"
+            sed -i "s/\\bibliography{\(.*\)}/biblio/$2/g" these.tex
+        else
+            echo "add"
+        fi
+        ;;
+    'these' )
+        make $2
+        ;;
+    'chapter' )
+        if [ -d "$2" ]; then
+            cd $2
+        else
+            echo "[ERROR] Le chapitre $2 n'existe pas"
+            exit
+        fi
+        make $3
+    ;;
+    'clean' )
+        dir=these
+        if [ $# -ne 1 ]
+        then
+            if [ -d "$2" ]; then
+                dir=$2
+                cd $2
+            else
+                echo "[ERROR] Le chapitre $2 n'existe pas"
+                exit
+            fi
+        fi
+        rm -f *.ps *.log *.aux *.out *.dvi *.bbl *.blg *.toc
+        echo "[OK] $dir nettoyé"
+    ;;
+    *)
+        help
+    ;;
+esac

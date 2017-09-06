@@ -1,6 +1,6 @@
+\def\maxinputlevel{150}
 \documentclass[a4paper,11pt]{book}
-\usepackage[utf8]{inputenc}
-\usepackage[french]{babel}
+\input{office/config}
 \input{office/env}
 \input{header/packages}
 \input{header/macros}
@@ -22,11 +22,7 @@
 
 	\tableofcontents
 
-	% \chapter{Chapitre-1}\label{chap:Chapitre-1}
-	% 	\includefrom{Chapitre-1/}{plan-Chapitre-1}
-	% \chapter{chap1}\label{chap:chap1}
-	% 	\includefrom{chap1/}{plan-chap1}
-	%<<new-chapter>>%
+    \input{imports}
 
 	\bibliographystyle{plain}
     \bibliography{}

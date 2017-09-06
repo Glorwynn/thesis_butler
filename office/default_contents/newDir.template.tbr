@@ -1,0 +1,14 @@
+\documentclass[a4paper,11pt]{report}
+\input{<++ PATH ++>office/config}
+\input{<++ PATH ++>office/env}
+\input{<++ PATH ++>header/packages}
+\input{<++ PATH ++>header/macros}
+
+
+\begin{document}
+    \<++ TITLE ++>{<++ TITLE ++>}
+
+    \input{content}
+
+    \input{../biblio}
+\end{document}
