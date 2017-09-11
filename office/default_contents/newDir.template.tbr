@@ -1,14 +1,15 @@
 \documentclass[a4paper,11pt]{report}
-\input{<++ PATH ++>office/config}
-\input{<++ PATH ++>office/env}
-\input{<++ PATH ++>header/packages}
-\input{<++ PATH ++>header/macros}
+\input{<++ PATH ++>/office/config}
+\input{<++ PATH ++>/office/env}
+\input{<++ PATH ++>/header/packages}
+\input{<++ PATH ++>/header/macros}
 
 
 \begin{document}
-    \<++ TITLE ++>{<++ TITLE ++>}
+    \<++ TYPE ++>{<++ TITLE ++>}
 
-    \input{content}
+    \input{plan-<++ ID ++>}
 
-    \input{../biblio}
+    \bibliographystyle{plain}
+    \bibliography{}
 \end{document}

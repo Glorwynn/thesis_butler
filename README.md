@@ -39,21 +39,41 @@ C'est un outil développé par un doctorant, pour des doctorants. Si vous souhai
 
 ## COMMANDES
 Cette section contient la liste des commandes de **TB**. Si vous contribuez, merci de les ajouter à cette liste.
-### Création de parties
-    new-part <titre de la partie> <label de la partie>
-Le nom de la partie en paramètre est convertis en snake_case. **TB** créer le répertoire puis un `makefile` (une copie de celui de la racine, dans lequel le fichier de référence `these` est changé en `part`) et enfin un fichier `part.tex` qui sera compilé si l'on souhaite un PDF ne contenant que la partie.
-### Création de chapitres
-    new-chapter <titre du chapitre> <label du chapitre> [->répertoire]
-Le nom du chapitre en paramètre est convertis en [snake_case](https://fr.wikipedia.org/wiki/Snake_case). **TB** créer le répertoire du chapitre dans la racine si le nom de la partie n'est pas renseignée, ou dans la partie si elle a été renseignée. Elle créer ensuite un `makefile` pour le chapitre, un fichier `chapter.tex` qui sera compilé si l'on souhaite un PDF ne contenant que le chapitre, et enfin un fichier de plan détaillé qui est remplis avec une section fictive. Une importation est alors ajoutée au fichier `content.tex` de son parent (la partie si il en fait partie, la thèse sinon).
+### Les parties
+#### Création de parties
+    part create <titre de la partie> <label de la partie>
+Le titre de la partie est celui qui apparaitra dans le PDF après compilation alors que le label sera dans le nom du répertoire et le label de la partie dans le fichier .tex. Les espaces contenus dans le label seront convertis en underscore.
+#### Compilation simple
+    part <repertoire de la partie> simple
+Execute une unique compilation du part.tex du répertoire
+#### Compilation complète
+    part <repertoire de la partie> complete
+Execute une compilation du .tex suivie d'une compilation de la biblio puis de 2 compilation du .tex. L'objectif est de mettre à jour le plan et la bibliographie.
+#### Ouverture du PDF
+    part <repertoire de la partie> open
+Ouvre le PDF `part.pdf` du répertoire
+### Les chapitres
+#### Création de chapitres
+    chapter create <titre de la partie> <label de la partie>
+Le titre de la partie est celui qui apparaitra dans le PDF après compilation alors que le label sera dans le nom du répertoire et le label de la partie dans le fichier .tex. Les espaces contenus dans le label seront convertis en underscore.
+#### Compilation simple
+    chapter <repertoire de la partie> simple
+Execute une unique compilation du part.tex du répertoire
+#### Compilation complète
+    chapter <repertoire de la partie> complete
+Execute une compilation du .tex suivie d'une compilation de la biblio puis de 2 compilation du .tex. L'objectif est de mettre à jour le plan et la bibliographie.
+#### Ouverture du PDF
+    chapter <repertoire de la partie> open
+Ouvre le PDF `part.pdf` du répertoire
+### Ajout d'un fichier de biblio
+    new-bib <nom du fichier bib>
+Ajoute un fichier de biblio dans le répertoire `biblio` et ajoute son référencement dans les fichiers `these.tex`, `part.tex` et `chapter.tex` de la thèse.
+### Mise à jour des références
+    update
+Met à jour les importations dans les fichiers `imports_*.tex` de tous les répertoires de la thèse, ainsi que les références des fichiers de biblio dans les fichiers  `these.tex`, `part.tex` et `chapter.tex`.
 ### Préparer la rédaction d'un chapitre
     go-write <nom_du_chapitre>
 Cette commande convertit, dans un nouveau fichier, tous les éléments des listes du fichier de plan détaillé et les place dans des balises facilitant la rédaction.
-### Ajout d'un fichier de biblio
-    new-bib <nom du fichier bib>
-Ajoute un fichier de biblio dans le répertoire `biblio` et ajoute son référencement dans le fichier `biblio.tex`.
-### Regénérer l'ordre des importantions
-    makeImports
-Réécrit le fichier d'importation des parties et chapitre en prenant en compte les noms de répertoires
 ### Affichage du plan
     ls [nom] [option]
 Affiche dans la console le plan de la thèse, partie ou chapitre indiqué. Les options disponibles sont :
@@ -67,18 +87,6 @@ Affiche un exemple de contenu pour tester la mise en page.
 ### Compilation de la thèse
     thesis <action>
 Cette commande permet de gérer la thèse dans son ensemble. Les actions disponibles sont :
-- `open` permet d'ouvrir le pdf correspondant avec `evince`
-- `simple` permet de compiler une seule fois la thèse (pour de simples modification de contenu textuel)
-- `complete` permet de compiler la thèse ainsi que la biblio de façon à ce que toutes les modifications de citations et de références soient pris en compte.
-### Compilation d'une partie
-    part <action>
-Cette commande permet de gérer une partie avec ses chapitres. Les actions disponibles sont :
-- `open` permet d'ouvrir le pdf correspondant avec `evince`
-- `simple` permet de compiler une seule fois la thèse (pour de simples modification de contenu textuel)
-- `complete` permet de compiler le chapitre ainsi que la biblio de façon à ce que toutes les modifications de citation et de référence soient pris en compte.
-### Compilation d'un chapitre
-    chapter <nom_du_chapitre> <action>
-Cette commande permet de gérer un chapitre. Les actions disponibles sont :
 - `open` permet d'ouvrir le pdf correspondant avec `evince`
 - `simple` permet de compiler une seule fois la thèse (pour de simples modification de contenu textuel)
 - `complete` permet de compiler la thèse ainsi que la biblio de façon à ce que toutes les modifications de citations et de références soient pris en compte.

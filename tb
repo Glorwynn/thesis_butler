@@ -42,47 +42,62 @@ function help {
 }
 
 case $1 in
-    'new-chapter' )
-        data=`echo $2 | sed s/' '/'-'/g`
-        file=plan-$data
-        mkdir $data
-        echo "[OK] Création du répertoire $data"
-        echo "\\section{Contenu du chapitre}" > $data/$file.tex
-        echo "[OK] Création du fichier $file.tex"
-        chapterContain="\\\\documentclass[a4paper,11pt]{report}\n\\\\input{../header/packages}\n\\\\input{../header/macros}\n\\\\input{../header/tikz}\n\n\\\\begin{document}\n\t\\\\chapter{$data}\n\t\\\\input{$file}\n\t\\\\bibliographystyle{plain}\n\t\\\\bibliography{"
-        for bibFile in biblio/*; do
-            bibFile=`expr match "$bibFile" '.*/\(.*\)\.bib'`
-            chapterContain=$chapterContain"../biblio/$bibFile,"
-        done
-        chapterContain=`expr match "$chapterContain" '^\(.*\),$'`"}\n\\\\end{document}"
-        echo $chapterContain > $data/chapter.tex
-        echo "[OK] Création du fichier chapter.tex"
-        cp makefile $data/makefile
-        sed -i 's/filename=these/filename=chapter/g' $data/makefile
-        echo "[OK] Création du makefile"
-        chapterAdded="\\\\chapter{$data}\\\\label{chap:$data}\n\t\t\\\\includefrom{$data\/}{$file}\n\t%<<new-chapter>>%"
-        sed -i "s/%<<new-chapter>>%/$chapterAdded/g" these.tex
-        echo "[OK] Ajout du lien dans these.tex"
+    'update' )
+        python2.7 office/thesis_butler.py update
     ;;
     'new-bib' )
-        if [ `grep -c "\\\\\\bibliography{}" these.tex` -eq 1 ]; then
-            echo "new"
-            sed -i "s/\\bibliography{\(.*\)}/biblio/$2/g" these.tex
+        if [[ $# -lt 2 ]]; then
+            echo "[ERROR] Le nombre de paramètres n'est pas valide"
+            help
         else
-            echo "add"
+            python2.7 office/thesis_butler.py newbib $2
         fi
         ;;
     'these' )
         make $2
         ;;
-    'chapter' )
-        if [ -d "$2" ]; then
-            cd $2
+    'part' )
+        if [[ $2 == "create" ]]; then
+            if [[ $# -lt 4 ]]; then
+                echo "[ERROR] Le nombre de paramètres n'est pas valide"
+                help
+            else
+                python2.7 office/thesis_butler.py newpart "$3" "$4"
+            fi
         else
-            echo "[ERROR] Le chapitre $2 n'existe pas"
-            exit
+            if [ -d "$2" ]; then
+                cd $2
+                make $3
+            else
+                echo "[ERROR] La partie $2 n'existe pas"
+                exit
+            fi
         fi
-        make $3
+    ;;
+    'chapter' )
+        if [[ $2 == "create" ]]; then
+            if [[ $# -lt 4 ]]; then
+                echo "[ERROR] Le nombre de paramètres n'est pas valide"
+                help
+            else
+                if [[ $# -gt 4 ]]; then
+                    python2.7 office/thesis_butler.py newchapter "$3" "$4" "$5"
+                else
+                    python2.7 office/thesis_butler.py newchapter "$3" "$4"
+                fi
+            fi
+        else
+            if [ -d "$2" ]; then
+                cd $2
+                make $3
+            else
+                echo "[ERROR] Le chapitre $2 n'existe pas"
+                exit
+            fi
+        fi
+    ;;
+    'thesis' )
+        make $2
     ;;
     'clean' )
         dir=these
